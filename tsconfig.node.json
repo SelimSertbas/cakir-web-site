@@ -4,7 +4,21 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": [
+      "node",
+      "babel__core",
+      "babel__generator",
+      "babel__template",
+      "babel__traverse",
+      "estree",
+      "json-schema",
+      "prop-types",
+      "react",
+      "react-dom",
+      "semver",
+      "ws"
+    ]
   },
   "include": ["vite.config.ts"]
 }
