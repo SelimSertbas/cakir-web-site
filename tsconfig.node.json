@@ -5,19 +5,11 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
+    "typeRoots": ["./node_modules/@types"],
     "types": [
       "node",
-      "babel__core",
-      "babel__generator",
-      "babel__template",
-      "babel__traverse",
-      "estree",
-      "json-schema",
-      "prop-types",
       "react",
-      "react-dom",
-      "semver",
-      "ws"
+      "react-dom"
     ]
   },
   "include": ["vite.config.ts"]
