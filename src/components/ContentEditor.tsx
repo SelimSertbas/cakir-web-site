@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+
+// Dinamik import: SSR ortamında null döndür
+const ReactQuill = typeof window === 'object' ? require('react-quill') : () => null;
+if (typeof window === 'object') {
+  require('react-quill/dist/quill.snow.css');
+}
 
 interface ContentEditorProps {
   initialValue?: string;
@@ -32,6 +36,9 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ initialValue = '', onChan
   useEffect(() => {
     onChange(value);
   }, [value, onChange]);
+
+  // SSR'da null döndür
+  if (typeof window !== 'object') return null;
 
   return (
     <div className="border border-coffee-200 rounded-lg overflow-hidden bg-white dark:bg-coffee-50">
