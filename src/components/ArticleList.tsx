@@ -11,7 +11,7 @@ interface ArticleListProps {
   onEdit: (id: string) => void;
 }
 
-const ArticleList = ({ onEdit }: ArticleListProps) => {
+export const ArticleList = ({ onEdit }: ArticleListProps) => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -170,5 +170,3 @@ const ArticleList = ({ onEdit }: ArticleListProps) => {
     </div>
   );
 };
-
-export default ArticleList;

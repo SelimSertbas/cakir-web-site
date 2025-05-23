@@ -1,14 +1,12 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { toast } from './ui/use-toast';
 import ImageUploader from './ImageUploader';
-import { Loading } from './ui/loading';
-
-// Lazy load heavy components
-const ContentEditor = lazy(() => import('./ContentEditor'));
+import ContentEditor from './ContentEditor';
+// import { getCurrentUser } from '@/lib/auth'; // Temporarily comment out
 
 interface ArticleFormProps {
   articleId?: string;
@@ -28,7 +26,8 @@ interface ArticleFormData {
   author_id: string; 
 }
 
-const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
+export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
+  // const currentUser = getCurrentUser(); // Temporarily comment out
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ArticleFormData>({
     defaultValues: {
       title: '',
@@ -37,7 +36,7 @@ const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
       status: 'draft',
       type: 'article',
       image_url: '',
-      author_id: 'temp_author_id'
+      author_id: 'temp_author_id' // Placeholder author_id
     }
   });
   const [content, setContent] = useState('');
@@ -94,7 +93,7 @@ const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
       return;
     }
 
-    if (!content.trim()) {
+    if (!content.trim()) { // Check content state directly
       toast({
         title: "Hata",
         description: "Lütfen içerik girin",
@@ -106,10 +105,10 @@ const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
     setIsLoading(true);
     try {
       const articleData = {
-        ...data,
-        content: content.trim(),
+        ...data, 
+        content: content.trim(), 
         updated_at: new Date().toISOString(),
-        author_id: data.author_id || 'temp_author_id'
+        author_id: data.author_id || 'temp_author_id' // Ensure author_id is always present
       };
 
       if (articleId) {
@@ -151,7 +150,7 @@ const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
 
   const submitWithStatus = (status: 'draft' | 'published') => {
     setValue('status', status);
-    handleSubmit(onSubmit)();
+    // handleSubmit(onSubmit)(); // Programmatically submit after setting status
   };
 
   return (
@@ -185,7 +184,7 @@ const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
           <label className="block text-sm font-medium text-coffee-700 mb-1">
             İçerik *
           </label>
-          <Suspense fallback={<Loading text="Editör yükleniyor..." />}>
+          <Suspense fallback={<div className="p-4 text-center border rounded-lg">İçerik editörü yükleniyor...</div>}>
             <ContentEditor
               initialValue={content}
               onChange={setContent}
@@ -212,7 +211,7 @@ const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
 
         <div className="flex items-center gap-4">
           <Button
-            type="button"
+            type="submit"
             onClick={() => submitWithStatus('draft')}
             variant="outline"
             disabled={isLoading}
@@ -221,7 +220,7 @@ const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
             {isLoading ? 'Kaydediliyor...' : 'Taslak Olarak Kaydet'}
           </Button>
           <Button
-            type="button"
+            type="submit"
             onClick={() => submitWithStatus('published')}
             className="bg-coffee-700 hover:bg-coffee-800 text-white"
             disabled={isLoading}
@@ -232,6 +231,4 @@ const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
       </div>
     </form>
   );
-};
-
-export default ArticleForm; 
+}; 

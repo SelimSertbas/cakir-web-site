@@ -1,8 +1,12 @@
-import { useState, useEffect, useMemo, memo, Suspense, lazy } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { logout, isAuthenticated } from '../lib/auth';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { ArticleList } from '../components/ArticleList';
+import { ArticleForm } from '../components/ArticleForm';
+import { VideoList } from '../components/VideoList';
+import { VideoForm } from '../components/VideoForm';
 import { Table, TableHeader, TableBody, TableCell, TableHead, TableRow } from '../components/ui/table';
 import { Badge } from '../components/ui/badge';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,13 +16,6 @@ import { toast } from 'sonner';
 import { Textarea } from '../components/ui/textarea';
 import { Input } from '../components/ui/input';
 import { Trash2 } from 'lucide-react';
-import { Loading } from '@/components/ui/loading';
-
-// Lazy load heavy components
-const ArticleList = lazy(() => import('../components/ArticleList'));
-const ArticleForm = lazy(() => import('../components/ArticleForm'));
-const VideoList = lazy(() => import('../components/VideoList'));
-const VideoForm = lazy(() => import('../components/VideoForm'));
 
 interface Question {
   id: string;
@@ -32,47 +29,6 @@ interface Question {
   is_published: boolean;
 }
 
-// Memoized Question Row Component
-const QuestionRow = memo(({ 
-  question, 
-  onView, 
-  onDelete 
-}: { 
-  question: Question; 
-  onView: (q: Question) => void; 
-  onDelete: (id: string) => void; 
-}) => (
-  <TableRow>
-    <TableCell>{question.name}</TableCell>
-    <TableCell>{question.email}</TableCell>
-    <TableCell className="max-w-md truncate">{question.question}</TableCell>
-    <TableCell>
-      <Badge variant={question.status === 'pending' ? 'outline' : 'default'}>
-        {question.status === 'pending' ? 'Beklemede' : 'Yanıtlandı'}
-      </Badge>
-    </TableCell>
-    <TableCell>{new Date(question.created_at).toLocaleDateString('tr-TR')}</TableCell>
-    <TableCell>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => onView(question)}
-      >
-        Görüntüle
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => onDelete(question.id)}
-        className="text-red-600 hover:bg-red-100"
-        title="Sil"
-      >
-        <Trash2 className="w-4 h-4" />
-      </Button>
-    </TableCell>
-  </TableRow>
-));
-
 const WriterPanel: React.FC = () => {
   const navigate = useNavigate();
   const [selectedArticleId, setSelectedArticleId] = useState<string | undefined>(undefined);
@@ -85,7 +41,7 @@ const WriterPanel: React.FC = () => {
   const [editedTitle, setEditedTitle] = useState('');
   const [editedQuestion, setEditedQuestion] = useState('');
 
-  const { data: questions, isLoading: questionsLoading } = useQuery({
+  const { data: questions } = useQuery({
     queryKey: ['questions'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -95,7 +51,7 @@ const WriterPanel: React.FC = () => {
 
       if (error) throw error;
       return data;
-    }
+    },
   });
 
   const answerMutation = useMutation<void, Error, { questionId: string; answer: string; isPublished: boolean }>({
@@ -185,18 +141,13 @@ const WriterPanel: React.FC = () => {
     setActiveVideoTab('list');
   };
 
-  // Memoize handlers
-  const handleViewQuestion = useMemo(() => (question: Question) => {
+  const handleViewQuestion = (question: Question) => {
     setSelectedQuestion(question);
     setAnswer(question.answer || '');
     setEditedName(question.name);
     setEditedTitle(question.title);
     setEditedQuestion(question.question);
-  }, []);
-
-  const handleDeleteQuestion = useMemo(() => (questionId: string) => {
-    deleteMutation.mutate({ questionId });
-  }, [deleteMutation]);
+  };
 
   const handleAnswer = () => {
     if (selectedQuestion && answer.trim()) {
@@ -275,87 +226,102 @@ const WriterPanel: React.FC = () => {
             </TabsList>
             
             <TabsContent value="articles">
-              <Suspense fallback={<Loading text="Yazılar yükleniyor..." />}>
-                <Tabs defaultValue={selectedArticleId ? "edit" : "list"} 
-                      className="bg-white p-6 rounded-lg shadow-sm">
-                  <TabsList className="mb-8 bg-coffee-100">
-                    <TabsTrigger value="list" className="data-[state=active]:bg-coffee-600 data-[state=active]:text-white">
-                      Yazılarım
-                    </TabsTrigger>
-                    <TabsTrigger value="edit" className="data-[state=active]:bg-coffee-600 data-[state=active]:text-white">
-                      {selectedArticleId ? 'Makaleyi Düzenle' : 'Yeni Makale'}
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="list">
-                    <ArticleList onEdit={setSelectedArticleId} />
-                  </TabsContent>
-                  
-                  <TabsContent value="edit">
-                    <ArticleForm 
-                      articleId={selectedArticleId} 
-                      onSave={() => setSelectedArticleId(undefined)}
-                    />
-                  </TabsContent>
-                </Tabs>
-              </Suspense>
+              <Tabs defaultValue={selectedArticleId ? "edit" : "list"} 
+                    className="bg-white p-6 rounded-lg shadow-sm">
+                <TabsList className="mb-8 bg-coffee-100">
+                  <TabsTrigger value="list" className="data-[state=active]:bg-coffee-600 data-[state=active]:text-white">
+                    Yazılarım
+                  </TabsTrigger>
+                  <TabsTrigger value="edit" className="data-[state=active]:bg-coffee-600 data-[state=active]:text-white">
+                    {selectedArticleId ? 'Makaleyi Düzenle' : 'Yeni Makale'}
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="list">
+                  <ArticleList onEdit={setSelectedArticleId} />
+                </TabsContent>
+                
+                <TabsContent value="edit">
+                  <ArticleForm 
+                    articleId={selectedArticleId} 
+                    onSave={() => setSelectedArticleId(undefined)}
+                  />
+                </TabsContent>
+              </Tabs>
             </TabsContent>
             
             <TabsContent value="questions" className="space-y-4">
-              {questionsLoading ? (
-                <Loading text="Sorular yükleniyor..." />
-              ) : (
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Ad Soyad</TableHead>
-                        <TableHead>E-posta</TableHead>
-                        <TableHead>Soru</TableHead>
-                        <TableHead>Durum</TableHead>
-                        <TableHead>Tarih</TableHead>
-                        <TableHead>İşlemler</TableHead>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Ad Soyad</TableHead>
+                      <TableHead>E-posta</TableHead>
+                      <TableHead>Soru</TableHead>
+                      <TableHead>Durum</TableHead>
+                      <TableHead>Tarih</TableHead>
+                      <TableHead>İşlemler</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {questions?.map((question) => (
+                      <TableRow key={question.id}>
+                        <TableCell>{question.name}</TableCell>
+                        <TableCell>{question.email}</TableCell>
+                        <TableCell className="max-w-md truncate">{question.question}</TableCell>
+                        <TableCell>
+                          <Badge variant={question.status === 'pending' ? 'outline' : 'default'}>
+                            {question.status === 'pending' ? 'Beklemede' : 'Yanıtlandı'}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{new Date(question.created_at).toLocaleDateString('tr-TR')}</TableCell>
+                        <TableCell>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleViewQuestion(question)}
+                          >
+                            Görüntüle
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteMutation.mutate({ questionId: question.id })}
+                            className="text-red-600 hover:bg-red-100"
+                            title="Sil"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </TableCell>
                       </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {questions?.map((question) => (
-                        <QuestionRow
-                          key={question.id}
-                          question={question}
-                          onView={handleViewQuestion}
-                          onDelete={handleDeleteQuestion}
-                        />
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </TabsContent>
             
             <TabsContent value="videos">
-              <Suspense fallback={<Loading text="Videolar yükleniyor..." />}>
-                <Tabs value={activeVideoTab} onValueChange={setActiveVideoTab} 
-                      className="bg-white p-6 rounded-lg shadow-sm">
-                  <TabsList className="mb-8 bg-coffee-100">
-                    <TabsTrigger value="list" className="data-[state=active]:bg-coffee-600 data-[state=active]:text-white">
-                      Videolar
-                    </TabsTrigger>
-                    <TabsTrigger value="add" className="data-[state=active]:bg-coffee-600 data-[state=active]:text-white">
-                      Yeni Video
-                    </TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="list">
-                    <VideoList key={videoListKey} />
-                  </TabsContent>
-                  
-                  <TabsContent value="add">
-                    <VideoForm 
-                      onSave={handleVideoSave}
-                    />
-                  </TabsContent>
-                </Tabs>
-              </Suspense>
+              <Tabs value={activeVideoTab} onValueChange={setActiveVideoTab} 
+                    className="bg-white p-6 rounded-lg shadow-sm">
+                <TabsList className="mb-8 bg-coffee-100">
+                  <TabsTrigger value="list" className="data-[state=active]:bg-coffee-600 data-[state=active]:text-white">
+                    Videolar
+                  </TabsTrigger>
+                  <TabsTrigger value="add" className="data-[state=active]:bg-coffee-600 data-[state=active]:text-white">
+                    Yeni Video
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="list">
+                  <VideoList key={videoListKey} />
+                </TabsContent>
+                
+                <TabsContent value="add">
+                  <VideoForm 
+                    onSave={handleVideoSave}
+                  />
+                </TabsContent>
+              </Tabs>
             </TabsContent>
           </Tabs>
         </div>
@@ -452,4 +418,4 @@ const WriterPanel: React.FC = () => {
   );
 };
 
-export default memo(WriterPanel); 
+export default WriterPanel; 

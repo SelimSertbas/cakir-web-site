@@ -1,8 +1,9 @@
 import React, { useEffect, useState, Suspense } from 'react';
-import { Loading } from './ui/loading';
-
-const ReactQuill = React.lazy(() => import('react-quill'));
 import 'react-quill/dist/quill.snow.css';
+
+const ReactQuill = React.lazy(() => import('react-quill').then(module => {
+  return { default: module.default };
+}));
 
 interface ContentEditorProps {
   initialValue?: string;
@@ -30,21 +31,17 @@ const formats = [
 
 const ContentEditor: React.FC<ContentEditorProps> = ({ initialValue = '', onChange }) => {
   const [value, setValue] = useState(initialValue);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     onChange(value);
   }, [value, onChange]);
 
-  if (!mounted) return null;
+  // SSR'da null döndür
+  if (typeof window === 'undefined') return null;
 
   return (
     <div className="border border-coffee-200 rounded-lg overflow-hidden bg-white dark:bg-coffee-50">
-      <Suspense fallback={<Loading text="Editör yükleniyor..." />}>
+      <Suspense fallback={<div>Yükleniyor...</div>}>
         <ReactQuill
           theme="snow"
           value={value}
