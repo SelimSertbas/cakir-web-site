@@ -9,7 +9,6 @@ import { supabase } from '@/integrations/supabase/client';
 import HistoricalImagesCarousel from '../components/HistoricalImagesCarousel';
 
 const historicalImages = [
-  { src: "/lovable-uploads/14f96f6a-555f-4f61-a62e-21b4e346c9c7.png" },
   { src: "/lovable-uploads/IMG-20250425-WA0069.jpg" },
   { src: "/lovable-uploads/IMG-20250425-WA0068.jpg" },
   { src: "/lovable-uploads/IMG-20250425-WA0067.jpg" },
