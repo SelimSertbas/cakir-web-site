@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useForm } from 'react-hook-form';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { toast } from './ui/use-toast';
 import ImageUploader from './ImageUploader';
-import ContentEditor from './ContentEditor';
-// import { getCurrentUser } from '@/lib/auth'; // Temporarily comment out
+import { Loading } from './ui/loading';
+
+// Lazy load heavy components
+const ContentEditor = lazy(() => import('./ContentEditor'));
 
 interface ArticleFormProps {
   articleId?: string;
@@ -26,8 +28,7 @@ interface ArticleFormData {
   author_id: string; 
 }
 
-export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
-  // const currentUser = getCurrentUser(); // Temporarily comment out
+const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ArticleFormData>({
     defaultValues: {
       title: '',
@@ -36,7 +37,7 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
       status: 'draft',
       type: 'article',
       image_url: '',
-      author_id: 'temp_author_id' // Placeholder author_id
+      author_id: 'temp_author_id'
     }
   });
   const [content, setContent] = useState('');
@@ -93,7 +94,7 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
       return;
     }
 
-    if (!content.trim()) { // Check content state directly
+    if (!content.trim()) {
       toast({
         title: "Hata",
         description: "Lütfen içerik girin",
@@ -105,10 +106,10 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
     setIsLoading(true);
     try {
       const articleData = {
-        ...data, 
-        content: content.trim(), 
+        ...data,
+        content: content.trim(),
         updated_at: new Date().toISOString(),
-        author_id: data.author_id || 'temp_author_id' // Ensure author_id is always present
+        author_id: data.author_id || 'temp_author_id'
       };
 
       if (articleId) {
@@ -150,7 +151,7 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
 
   const submitWithStatus = (status: 'draft' | 'published') => {
     setValue('status', status);
-    // handleSubmit(onSubmit)(); // Programmatically submit after setting status
+    handleSubmit(onSubmit)();
   };
 
   return (
@@ -184,10 +185,12 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
           <label className="block text-sm font-medium text-coffee-700 mb-1">
             İçerik *
           </label>
-          <ContentEditor
-            initialValue={content}
-            onChange={setContent}
-          />
+          <Suspense fallback={<Loading text="Editör yükleniyor..." />}>
+            <ContentEditor
+              initialValue={content}
+              onChange={setContent}
+            />
+          </Suspense>
           {handleSubmit(onSubmit) && !content.trim() && (
             <p className="text-red-500 text-sm mt-1">İçerik zorunludur</p>
           )}
@@ -209,7 +212,7 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
 
         <div className="flex items-center gap-4">
           <Button
-            type="submit"
+            type="button"
             onClick={() => submitWithStatus('draft')}
             variant="outline"
             disabled={isLoading}
@@ -218,7 +221,7 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
             {isLoading ? 'Kaydediliyor...' : 'Taslak Olarak Kaydet'}
           </Button>
           <Button
-            type="submit"
+            type="button"
             onClick={() => submitWithStatus('published')}
             className="bg-coffee-700 hover:bg-coffee-800 text-white"
             disabled={isLoading}
@@ -229,4 +232,6 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
       </div>
     </form>
   );
-}; 
+};
+
+export default ArticleForm; 

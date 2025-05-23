@@ -8,7 +8,7 @@ import { Trash2, Eye } from 'lucide-react';
 import { Loading } from './ui/loading';
 import { Video } from '@/types';
 
-export const VideoList: React.FC = () => {
+const VideoList: React.FC = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -128,4 +128,6 @@ export const VideoList: React.FC = () => {
       </div>
     </div>
   );
-}; 
+};
+
+export default VideoList; 

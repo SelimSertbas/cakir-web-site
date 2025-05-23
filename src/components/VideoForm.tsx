@@ -23,7 +23,7 @@ interface VideoFormData {
   status?: "draft" | "published";
 }
 
-export const VideoForm: React.FC<VideoFormProps> = ({ onSave, onSuccess }) => {
+const VideoForm: React.FC<VideoFormProps> = ({ onSave, onSuccess }) => {
   const { register, handleSubmit, reset, formState: { errors } } = useForm<VideoFormData>();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -157,4 +157,6 @@ export const VideoForm: React.FC<VideoFormProps> = ({ onSave, onSuccess }) => {
       </div>
     </form>
   );
-}; 
+};
+
+export default VideoForm; 
