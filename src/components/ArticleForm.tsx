@@ -6,6 +6,7 @@ import { Input } from './ui/input';
 import { toast } from './ui/use-toast';
 import ImageUploader from './ImageUploader';
 import ContentEditor from './ContentEditor';
+import { useAuth } from '@/lib/auth';
 
 interface ArticleFormProps {
   articleId?: string;
@@ -26,12 +27,15 @@ interface ArticleFormData {
 }
 
 export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
+  const { user } = useAuth();
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ArticleFormData>({
     defaultValues: {
       title: '',
       excerpt: '',
       category: '',
-      status: 'draft'
+      status: 'draft',
+      type: 'article',
+      image_url: ''
     }
   });
   const [content, setContent] = useState('');

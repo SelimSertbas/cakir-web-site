@@ -6,50 +6,37 @@ import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { Trash2, Eye } from 'lucide-react';
 import { Loading } from './ui/loading';
-
-interface Video {
-  id: string;
-  title: string;
-  video_url: string;
-  video_id: string;
-  created_at: string;
-  updated_at: string;
-}
+import { Video } from '@/types';
 
 export const VideoList: React.FC = () => {
   const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const loadVideos = async () => {
-    try {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from('videos')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error('Error loading videos:', error);
-        throw error;
-      }
-
-      if (data) {
-        setVideos(data);
-      }
-    } catch (error) {
-      console.error('Error loading videos:', error);
-      toast({
-        title: "Hata",
-        description: "Videolar yüklenemedi",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadVideos();
+    const fetchVideos = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('videos')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (data) {
+          setVideos(data.map(video => ({
+            ...video,
+            video_id: video.video_id || video.id,
+            status: video.status as "draft" | "published"
+          })));
+        }
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVideos();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -68,7 +55,7 @@ export const VideoList: React.FC = () => {
         description: "Video başarıyla silindi",
       });
 
-      loadVideos(); // Listeyi yenile
+      // Listeyi yenile
     } catch (error) {
       console.error('Error deleting video:', error);
       toast({

@@ -5,15 +5,8 @@ import { toast } from './ui/use-toast';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { Edit, Trash2, Eye } from 'lucide-react';
-
-interface Article {
-  id: string;
-  title: string;
-  excerpt: string;
-  status: 'draft' | 'published';
-  created_at: string;
-  updated_at: string;
-}
+import { Article } from '@/types';
+import { Loading } from './ui/loading';
 
 interface ArticleListProps {
   onEdit: (id: string) => void;
@@ -24,30 +17,30 @@ export const ArticleList: React.FC<ArticleListProps> = ({ onEdit }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    loadArticles();
+    const fetchArticles = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('articles')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        if (data) {
+          setArticles(data.map(article => ({
+            ...article,
+            status: article.status as "draft" | "published"
+          })));
+        }
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchArticles();
   }, []);
-
-  const loadArticles = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('articles')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      setArticles(data || []);
-    } catch (error) {
-      console.error('Error loading articles:', error);
-      toast({
-        title: "Hata",
-        description: "Makaleler yüklenemedi",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleDelete = async (id: string) => {
     if (!window.confirm('Bu makaleyi silmek istediğinizden emin misiniz?')) return;
@@ -65,7 +58,7 @@ export const ArticleList: React.FC<ArticleListProps> = ({ onEdit }) => {
         description: "Makale başarıyla silindi",
       });
 
-      loadArticles();
+      fetchArticles();
     } catch (error) {
       console.error('Error deleting article:', error);
       toast({
