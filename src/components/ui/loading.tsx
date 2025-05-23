@@ -1,27 +1,15 @@
 import { cn } from "@/lib/utils";
 
 interface LoadingProps {
-  className?: string;
-  size?: "sm" | "md" | "lg";
+  text?: string;
+  fullScreen?: boolean;
 }
 
-export const Loading = ({ className, size = "md" }: LoadingProps) => {
-  const sizeClasses = {
-    sm: "w-4 h-4",
-    md: "w-8 h-8",
-    lg: "w-12 h-12",
-  };
-
+export const Loading = ({ text = "Yükleniyor...", fullScreen = false }: LoadingProps) => {
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-background/90 backdrop-blur-sm z-50">
-      <div
-        className={cn(
-          "animate-spin rounded-full border-4 border-primary border-t-transparent",
-          sizeClasses[size],
-          className
-        )}
-      />
-      <p className="mt-4 text-lg font-medium text-primary">Yükleniyor...</p>
+    <div className={`flex flex-col items-center justify-center ${fullScreen ? 'min-h-screen' : 'min-h-[200px]'}`}>
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      {text && <p className="mt-2 text-sm text-muted-foreground">{text}</p>}
     </div>
   );
 }; 

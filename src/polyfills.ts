@@ -16,4 +16,15 @@ window.process = process;
 window.EventEmitter = EventEmitter;
 window.util = customUtil;
 
+// Polyfills for older browsers
+if (typeof window !== 'undefined') {
+  // Add any browser polyfills here
+  if (!window.TextEncoder) {
+    window.TextEncoder = require('text-encoding').TextEncoder;
+  }
+  if (!window.TextDecoder) {
+    window.TextDecoder = require('text-encoding').TextDecoder;
+  }
+}
+
 export {}; 

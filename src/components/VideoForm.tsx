@@ -13,7 +13,14 @@ interface VideoFormProps {
 
 interface VideoFormData {
   title: string;
-  videoUrl: string;
+  video_url: string;
+  video_id: string;
+  type: string;
+  created_at: string;
+  updated_at: string;
+  description: string;
+  thumbnail_url: string;
+  status?: "draft" | "published";
 }
 
 export const VideoForm: React.FC<VideoFormProps> = ({ onSave, onSuccess }) => {
@@ -30,7 +37,7 @@ export const VideoForm: React.FC<VideoFormProps> = ({ onSave, onSuccess }) => {
       return;
     }
 
-    if (!data.videoUrl.trim()) {
+    if (!data.video_url.trim()) {
       toast({
         title: "Hata",
         description: "Lütfen bir video URL'si girin",
@@ -40,7 +47,7 @@ export const VideoForm: React.FC<VideoFormProps> = ({ onSave, onSuccess }) => {
     }
 
     // YouTube URL'sini video ID'sine dönüştür
-    const videoId = extractVideoId(data.videoUrl);
+    const videoId = extractVideoId(data.video_url);
     if (!videoId) {
       toast({
         title: "Hata",
@@ -54,11 +61,14 @@ export const VideoForm: React.FC<VideoFormProps> = ({ onSave, onSuccess }) => {
     try {
       const videoData = {
         title: data.title.trim(),
-        video_url: data.videoUrl.trim(),
+        video_url: data.video_url.trim(),
         video_id: videoId,
         type: 'video',
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
+        description: data.description || '',
+        thumbnail_url: data.thumbnail_url || '',
+        status: data.status || 'draft'
       };
 
       const { error } = await supabase
@@ -123,11 +133,11 @@ export const VideoForm: React.FC<VideoFormProps> = ({ onSave, onSuccess }) => {
             YouTube Video URL'si *
           </label>
           <Input 
-            {...register('videoUrl', { required: true })} 
+            {...register('video_url', { required: true })} 
             placeholder="https://www.youtube.com/watch?v=..."
-            className={errors.videoUrl ? 'border-red-500' : ''}
+            className={errors.video_url ? 'border-red-500' : ''}
           />
-          {errors.videoUrl && (
+          {errors.video_url && (
             <p className="text-red-500 text-sm mt-1">Video URL'si zorunludur</p>
           )}
           <p className="text-sm text-coffee-500 mt-1">

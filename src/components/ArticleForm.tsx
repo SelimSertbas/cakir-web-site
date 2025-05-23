@@ -15,8 +15,14 @@ interface ArticleFormProps {
 interface ArticleFormData {
   title: string;
   excerpt: string;
+  content: string;
   category: string;
-  status: 'draft' | 'published';
+  image_url: string;
+  status: "draft" | "published";
+  type: string;
+  published_at: string | undefined;
+  updated_at: string;
+  author_id?: string;
 }
 
 export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
@@ -50,7 +56,13 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
             title: data.title || '',
             excerpt: data.excerpt || '',
             category: data.category || '',
-            status: (data.status === 'published' ? 'published' : 'draft') as 'draft' | 'published'
+            status: (data.status === 'published' ? 'published' : 'draft') as 'draft' | 'published',
+            content: data.content || '',
+            image_url: data.image_url || '',
+            type: data.type || '',
+            published_at: data.published_at || undefined,
+            updated_at: data.updated_at || '',
+            author_id: data.author_id || undefined
           });
           setContent(data.content || '');
           setImageUrl(data.image_url || '');
@@ -78,7 +90,7 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
       return;
     }
 
-    if (!content.trim()) {
+    if (!data.content.trim()) {
       toast({
         title: "Hata",
         description: "Lütfen içerik girin",
@@ -92,13 +104,14 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
       const articleData = {
         title: data.title.trim(),
         excerpt: data.excerpt.trim(),
-        content: content.trim(),
+        content: data.content.trim(),
         category: data.category.trim(),
-        image_url: imageUrl,
+        image_url: data.image_url,
         status: data.status,
-        type: 'article',
-        published_at: data.status === 'published' ? new Date().toISOString() : null,
-        updated_at: new Date().toISOString()
+        type: data.type || 'article',
+        published_at: data.status === 'published' ? data.published_at : undefined,
+        updated_at: new Date().toISOString(),
+        author_id: user?.id
       };
 
       if (articleId) {
