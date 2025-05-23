@@ -6,7 +6,7 @@ import { Input } from './ui/input';
 import { toast } from './ui/use-toast';
 import ImageUploader from './ImageUploader';
 import ContentEditor from './ContentEditor';
-import { useAuth } from '@/lib/auth';
+import { getCurrentUser } from '@/lib/auth';
 
 interface ArticleFormProps {
   articleId?: string;
@@ -23,11 +23,11 @@ interface ArticleFormData {
   type: string;
   published_at: string | undefined;
   updated_at: string;
-  author_id?: string;
+  // author_id?: string; // Temporarily remove author_id
 }
 
 export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
-  const { user } = useAuth();
+  const currentUser = getCurrentUser();
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<ArticleFormData>({
     defaultValues: {
       title: '',
@@ -36,10 +36,10 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
       status: 'draft',
       type: 'article',
       image_url: ''
+      // author_id: undefined // Temporarily remove author_id
     }
   });
   const [content, setContent] = useState('');
-  const [imageUrl, setImageUrl] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -65,11 +65,10 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
             image_url: data.image_url || '',
             type: data.type || '',
             published_at: data.published_at || undefined,
-            updated_at: data.updated_at || '',
-            author_id: data.author_id || undefined
+            updated_at: data.updated_at || ''
+            // author_id: data.author_id || undefined // Temporarily remove author_id
           });
           setContent(data.content || '');
-          setImageUrl(data.image_url || '');
         }
       } catch (error) {
         console.error('Error loading article:', error);
@@ -115,7 +114,7 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
         type: data.type || 'article',
         published_at: data.status === 'published' ? data.published_at : undefined,
         updated_at: new Date().toISOString(),
-        author_id: user?.id
+        // author_id: currentUser // TODO: Fix this to get Supabase user ID
       };
 
       if (articleId) {
@@ -152,7 +151,7 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
   };
 
   const handleImageSelected = (url: string) => {
-    setImageUrl(url);
+    setValue('image_url', url);
   };
 
   const submitWithStatus = (status: 'draft' | 'published') => {
