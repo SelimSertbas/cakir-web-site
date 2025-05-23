@@ -1,9 +1,10 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '../components/ui/button';
 import ImageUploader from './ImageUploader';
 import { Input } from '../components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { useEditor } from '@tiptap/react';
+import { extensions } from '../utils/tiptapExtensions';
 
 interface RichTextEditorProps {
   initialContent?: string;
@@ -33,6 +34,14 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   
   const editorRef = useRef<HTMLDivElement>(null);
 
+  const editor = useEditor({
+    extensions,
+    content: content || '',
+    onUpdate: ({ editor }) => {
+      setContent(editor.getHTML());
+    }
+  });
+
   useEffect(() => {
     // Update preview when content changes
     if (editorRef.current && activeTab === 'preview') {
@@ -46,10 +55,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }, [metaDescription]);
 
   const handleCommand = (command: string, value: string | null = null) => {
-    document.execCommand(command, false, value);
-    if (editorRef.current) {
-      setContent(editorRef.current.innerHTML);
-    }
+    editor?.commands.command(command, { value });
   };
 
   const handleImageSelected = (imageUrl: string, alt: string, title: string) => {

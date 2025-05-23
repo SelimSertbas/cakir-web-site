@@ -2,56 +2,55 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import { Article } from '@/types';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import { Loading } from '@/components/ui/loading';
+import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
 
-const ArticleDetail = () => {
-  const { id } = useParams();
+export const ArticleDetail = () => {
+  const { id } = useParams<{ id: string }>();
 
-  const { data: article, isLoading } = useQuery({
-    queryKey: ['article', id],
-    queryFn: async () => {
+  const { data: article, isLoading } = useQuery<Article | null>(
+    ['article', id],
+    async () => {
+      if (!id) return null;
       const { data, error } = await supabase
         .from('articles')
         .select('*')
         .eq('id', id)
-        .maybeSingle();
+        .single();
 
-      if (error) throw error;
-      return data;
-    },
-  });
+      if (error) {
+        console.error("Error fetching article:", error);
+        return null;
+      }
+      return data as Article | null;
+    }
+  );
+
+  const formatDateSafe = (dateString: string | undefined) => {
+    if (!dateString) return 'Belirtilmemiş';
+    try {
+      return format(new Date(dateString), 'd MMMM yyyy HH:mm', { locale: tr });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return 'Geçersiz Tarih';
+    }
+  };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <Navbar />
-        <main className="flex-grow py-16">
-          <div className="container-content">
-            <div className="animate-pulse">
-              <div className="h-8 bg-coffee-200 dark:bg-coffee-700 rounded w-3/4 mb-4"></div>
-              <div className="h-4 bg-coffee-100 dark:bg-coffee-800 rounded w-1/4 mb-8"></div>
-              <div className="h-4 bg-coffee-100 dark:bg-coffee-800 rounded w-full mb-3"></div>
-              <div className="h-4 bg-coffee-100 dark:bg-coffee-800 rounded w-full mb-3"></div>
-              <div className="h-4 bg-coffee-100 dark:bg-coffee-800 rounded w-2/3"></div>
-            </div>
-          </div>
-        </main>
-        <Footer />
-      </div>
-    );
+    return <Loading text="Makale yükleniyor..." />;
   }
 
   if (!article) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background">
         <Navbar />
         <main className="flex-grow py-16">
-          <div className="container-content">
-            <h1 className="text-3xl font-serif text-coffee-900 dark:text-coffee-100">Makale bulunamadı</h1>
-            <p className="text-coffee-600 dark:text-coffee-300 mt-4">
-              Aradığınız makale mevcut değil veya kaldırılmış olabilir.
-            </p>
+          <div className="container-content max-w-4xl mx-auto">
+            <p>Makale bulunamadı veya yüklenirken bir hata oluştu.</p>
           </div>
         </main>
         <Footer />
@@ -70,7 +69,7 @@ const ArticleDetail = () => {
             </h1>
             
             <div className="flex items-center text-sm text-coffee-500 dark:text-coffee-400 mb-8">
-              <span>{new Date(article.published_at).toLocaleDateString('tr-TR')}</span>
+              <span>{formatDateSafe(article.published_at)}</span>
               <span className="mx-2">•</span>
               <span>{article.category}</span>
             </div>

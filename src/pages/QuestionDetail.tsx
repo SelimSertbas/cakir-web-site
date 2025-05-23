@@ -9,35 +9,39 @@ import { ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { Loading } from '@/components/ui/loading';
-
-interface Question {
-  id: string;
-  title: string;
-  name: string;
-  email: string;
-  question: string;
-  answer: string | null;
-  created_at: string;
-  status: 'pending' | 'answered';
-}
+import { Question } from '@/types';
 
 const QuestionDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data: question, isLoading } = useQuery<Question>({
+  const { data: question, isLoading } = useQuery<Question | null>({
     queryKey: ['question', id],
     queryFn: async () => {
+      if (!id) return null;
       const { data, error } = await supabase
         .from('questions')
         .select('*')
         .eq('id', id)
         .single();
 
-      if (error) throw error;
-      return data;
+      if (error) {
+        console.error("Error fetching question:", error);
+        return null;
+      }
+      return data as Question | null;
     },
   });
+
+  const formatDateSafe = (dateString: string | undefined) => {
+    if (!dateString) return 'Belirtilmemiş';
+    try {
+      return format(new Date(dateString), 'd MMMM yyyy HH:mm', { locale: tr });
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return 'Geçersiz Tarih';
+    }
+  };
 
   if (isLoading) {
     return <Loading text="Soru yükleniyor..." />;
@@ -49,7 +53,7 @@ const QuestionDetail = () => {
         <Navbar />
         <main className="flex-grow py-16">
           <div className="container-content max-w-4xl mx-auto">
-            <p>Soru bulunamadı.</p>
+            <p>Soru bulunamadı veya yüklenirken bir hata oluştu.</p>
           </div>
         </main>
         <Footer />
@@ -78,7 +82,7 @@ const QuestionDetail = () => {
                 {question.title}
               </h1>
               <div className="text-sm text-coffee-600 dark:text-coffee-400">
-                {question.name} - {format(new Date(question.created_at), 'd MMMM yyyy', { locale: tr })}
+                {question.name} - {formatDateSafe(question.created_at)}
               </div>
             </div>
 
