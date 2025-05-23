@@ -104,12 +104,17 @@ export const ArticleForm = ({ articleId, onSave }: ArticleFormProps) => {
 
     setIsLoading(true);
     try {
-      const articleData = {
+      const now = new Date().toISOString();
+      const articleData: any = {
         ...data, 
         content: content.trim(), 
-        updated_at: new Date().toISOString(),
-        author_id: data.author_id || 'temp_author_id' // Ensure author_id is always present
+        updated_at: now,
+        created_at: now,
+        author_id: "550e8400-e29b-41d4-a716-446655440000"
       };
+      if (articleData.status === 'published') {
+        articleData.published_at = now;
+      }
 
       if (articleId) {
         const { error } = await supabase
