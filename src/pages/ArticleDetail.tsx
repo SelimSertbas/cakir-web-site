@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -88,9 +87,10 @@ const ArticleDetail = () => {
               {article.excerpt}
             </div>
 
-            <div className="text-coffee-800 dark:text-coffee-200 leading-relaxed">
-              {article.content}
-            </div>
+            <div
+              className="text-coffee-800 dark:text-coffee-200 leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
           </article>
         </div>
       </main>

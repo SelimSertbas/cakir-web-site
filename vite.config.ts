@@ -9,12 +9,42 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      "events": "events",
+      "stream": "stream-browserify",
+      "util": "util-inspect",
+      "buffer": "buffer",
+      "process": "process/browser",
     },
+  },
+  define: {
+    'process.env': {},
+    'process.platform': JSON.stringify(process.platform),
+    'process.version': JSON.stringify(process.version),
+  },
+  optimizeDeps: {
+    include: [
+      'events',
+      'stream-browserify',
+      'util-inspect',
+      'buffer',
+      'process'
+    ],
+    esbuildOptions: {
+      define: {
+        global: 'globalThis'
+      }
+    }
   },
   build: {
     outDir: 'dist',
     sourcemap: false,
     minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true
+      }
+    },
     rollupOptions: {
       output: {
         manualChunks: {
@@ -25,8 +55,11 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,
+    port: 3001,
     strictPort: true,
     host: true,
+    hmr: {
+      overlay: false
+    }
   },
 });

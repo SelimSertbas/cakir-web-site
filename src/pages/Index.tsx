@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
@@ -53,7 +52,7 @@ const Index: React.FC = () => {
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button asChild className="bg-coffee-700 hover:bg-coffee-800 dark:bg-coffee-600 dark:hover:bg-coffee-700">
-                  <Link to="/articles">Makaleler</Link>
+                  <Link to="/articles">Yazılarım</Link>
                 </Button>
                 <Button asChild variant="outline" className="border-coffee-300 text-coffee-800 hover:bg-coffee-100 dark:border-coffee-700 dark:text-coffee-200 dark:hover:bg-coffee-800/50">
                   <Link to="/about">Hakkımda</Link>

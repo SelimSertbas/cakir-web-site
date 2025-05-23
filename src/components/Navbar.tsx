@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
@@ -59,7 +58,7 @@ const Navbar: React.FC = () => {
               isActive("/articles") ? "text-coffee-800 dark:text-coffee-300" : "text-muted-foreground"
             )}
           >
-            Makaleler
+            Yazılarım
           </Link>
           <Link
             to="/videos"
@@ -78,6 +77,24 @@ const Navbar: React.FC = () => {
             )}
           >
             Hakkımda
+          </Link>
+          <Link
+            to="/ask"
+            className={cn(
+              "text-base font-medium transition-colors hover:text-coffee-700 dark:hover:text-coffee-300",
+              isActive("/ask") ? "text-coffee-800 dark:text-coffee-300" : "text-muted-foreground"
+            )}
+          >
+            Soru Sor
+          </Link>
+          <Link
+            to="/questions"
+            className={cn(
+              "text-base font-medium transition-colors hover:text-coffee-700 dark:hover:text-coffee-300",
+              isActive("/questions") ? "text-coffee-800 dark:text-coffee-300" : "text-muted-foreground"
+            )}
+          >
+            Soru & Cevap
           </Link>
 
           <ThemeSwitcher />
@@ -105,7 +122,7 @@ const Navbar: React.FC = () => {
                 )}
                 onClick={() => setIsMenuOpen(false)}
               >
-                Makaleler
+                Yazılarım
               </Link>
               <Link
                 to="/videos"
@@ -126,6 +143,26 @@ const Navbar: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 Hakkımda
+              </Link>
+              <Link
+                to="/ask"
+                className={cn(
+                  "text-base font-medium transition-colors hover:text-coffee-700",
+                  isActive("/ask") ? "text-coffee-800" : "text-muted-foreground"
+                )}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Soru Sor
+              </Link>
+              <Link
+                to="/questions"
+                className={cn(
+                  "text-base font-medium transition-colors hover:text-coffee-700",
+                  isActive("/questions") ? "text-coffee-800" : "text-muted-foreground"
+                )}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Soru & Cevap
               </Link>
               
               <div className="flex justify-end">

@@ -11,6 +11,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@analytics/google-analytics": "^1.1.0",
+    "@google-analytics/data": "^5.1.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
@@ -38,8 +40,11 @@
     "@radix-ui/react-toggle": "^1.0.3",
     "@radix-ui/react-toggle-group": "^1.0.4",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@sentry/react": "^9.15.0",
     "@supabase/supabase-js": "^2.39.3",
     "@tanstack/react-query": "^4.36.1",
+    "@tinymce/tinymce-react": "^4.3.2",
+    "analytics": "^0.8.16",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
@@ -47,10 +52,12 @@
     "embla-carousel-react": "^8.0.0",
     "lucide-react": "^0.323.0",
     "next-themes": "^0.2.1",
+    "quill": "^2.0.3",
     "react": "^18.2.0",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.50.1",
+    "react-quill": "^2.0.0",
     "react-router-dom": "^6.22.0",
     "sonner": "^1.4.0",
     "tailwind-merge": "^2.2.1",
@@ -65,8 +72,8 @@
     "@types/json-schema": "^7.0.15",
     "@types/node": "^20.17.32",
     "@types/prop-types": "^15.7.14",
-    "@types/react": "^18.2.43",
-    "@types/react-dom": "^18.2.17",
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.7",
     "@types/semver": "^7.7.0",
     "@types/ws": "^8.18.1",
     "@typescript-eslint/eslint-plugin": "^6.14.0",
@@ -78,9 +85,9 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "postcss": "^8.4.33",
     "tailwindcss": "^3.4.1",
+    "terser": "^5.29.2",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8",
-    "terser": "^5.29.2"
+    "vite": "^5.0.8"
   },
   "engines": {
     "node": ">=18.0.0"

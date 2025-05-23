@@ -25,17 +25,17 @@ export interface Database {
           updated_at: string
         }
         Insert: {
-          author_id?: string
+          author_id: string
           category: string
           content: string
           created_at?: string
           excerpt: string
           id?: string
-          image_url?: string
+          image_url: string
           published_at?: string
           status?: string
           title: string
-          type?: string
+          type: string
           updated_at?: string
         }
         Update: {
@@ -54,33 +54,78 @@ export interface Database {
         }
         Relationships: []
       }
-      videos: {
+      questions: {
         Row: {
           id: string
+          name: string
+          email: string
           title: string
-          video_url: string
-          video_id: string
-          type: string
+          question: string
+          answer: string | null
+          status: 'pending' | 'answered'
           created_at: string
-          updated_at: string
+          is_published: boolean
         }
         Insert: {
           id?: string
+          name: string
+          email: string
           title: string
-          video_url: string
-          video_id: string
-          type?: string
+          question: string
+          answer?: string | null
+          status?: 'pending' | 'answered'
           created_at?: string
-          updated_at?: string
+          is_published?: boolean
         }
         Update: {
           id?: string
+          name?: string
+          email?: string
           title?: string
-          video_url?: string
-          video_id?: string
-          type?: string
+          question?: string
+          answer?: string | null
+          status?: 'pending' | 'answered'
           created_at?: string
+          is_published?: boolean
+        }
+        Relationships: []
+      }
+      videos: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          published_at: string
+          status: string
+          thumbnail_url: string
+          title: string
+          type: string
+          updated_at: string
+          video_url: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          published_at?: string
+          status?: string
+          thumbnail_url: string
+          title: string
+          type: string
           updated_at?: string
+          video_url: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          published_at?: string
+          status?: string
+          thumbnail_url?: string
+          title?: string
+          type?: string
+          updated_at?: string
+          video_url?: string
         }
         Relationships: []
       }

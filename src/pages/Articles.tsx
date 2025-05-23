@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,7 +27,7 @@ const Articles = () => {
       <main className="flex-grow py-16">
         <div className="container-content">
           <h1 className="text-3xl md:text-4xl font-serif font-bold text-coffee-900 dark:text-coffee-100 mb-2">
-            Makaleler
+            Yazılarım
           </h1>
           <p className="text-coffee-600 dark:text-coffee-300 mb-10">
             Tarih, kültür ve toplum üzerine detaylı araştırma ve incelemeler
