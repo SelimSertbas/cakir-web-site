@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,31 +8,13 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "events": "events",
-      "stream": "stream-browserify",
-      "util": "util-inspect",
-      "buffer": "buffer",
-      "process": "process/browser",
     },
   },
   define: {
     'process.env': {},
     'process.platform': JSON.stringify(process.platform),
     'process.version': JSON.stringify(process.version),
-  },
-  optimizeDeps: {
-    include: [
-      'events',
-      'stream-browserify',
-      'util-inspect',
-      'buffer',
-      'process'
-    ],
-    esbuildOptions: {
-      define: {
-        global: 'globalThis'
-      }
-    }
+    global: 'globalThis',
   },
   build: {
     outDir: 'dist',
