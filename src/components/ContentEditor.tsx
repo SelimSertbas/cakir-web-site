@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 
-// Dinamik import: SSR ortamında null döndür
-const ReactQuill = typeof window === 'object' ? require('react-quill') : () => null;
-if (typeof window === 'object') {
-  require('react-quill/dist/quill.snow.css');
-}
+const ReactQuill = React.lazy(() => import('react-quill'));
+import 'react-quill/dist/quill.snow.css';
 
 interface ContentEditorProps {
   initialValue?: string;
@@ -38,19 +35,21 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ initialValue = '', onChan
   }, [value, onChange]);
 
   // SSR'da null döndür
-  if (typeof window !== 'object') return null;
+  if (typeof window === 'undefined') return null;
 
   return (
     <div className="border border-coffee-200 rounded-lg overflow-hidden bg-white dark:bg-coffee-50">
-      <ReactQuill
-        theme="snow"
-        value={value}
-        onChange={setValue}
-        modules={modules}
-        formats={formats}
-        placeholder="İçeriğinizi buraya yazın..."
-        style={{ minHeight: 300 }}
-      />
+      <Suspense fallback={<div>Yükleniyor...</div>}>
+        <ReactQuill
+          theme="snow"
+          value={value}
+          onChange={setValue}
+          modules={modules}
+          formats={formats}
+          placeholder="İçeriğinizi buraya yazın..."
+          style={{ minHeight: 300 }}
+        />
+      </Suspense>
     </div>
   );
 };
