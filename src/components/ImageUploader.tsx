@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from '../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../components/ui/dialog';
@@ -10,7 +9,6 @@ interface ImageUploaderProps {
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [altText, setAltText] = useState('');
   const [imageTitle, setImageTitle] = useState('');
@@ -31,7 +29,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected }) => {
       return;
     }
     
-    setSelectedFile(file);
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result as string);
@@ -52,7 +49,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected }) => {
     
     // Reset
     setIsOpen(false);
-    setSelectedFile(null);
     setPreview(null);
     setAltText('');
     setImageTitle('');
@@ -183,7 +179,6 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageSelected }) => {
                     type="button" 
                     variant="outline"
                     onClick={() => {
-                      setSelectedFile(null);
                       setPreview(null);
                     }}
                     className="border-coffee-200"

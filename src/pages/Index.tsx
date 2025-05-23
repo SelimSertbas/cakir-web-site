@@ -7,7 +7,19 @@ import { Button } from '../components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import HistoricalImagesCarousel from '../components/HistoricalImagesCarousel';
-import { Book } from 'lucide-react';
+
+const historicalImages = [
+  {
+    src: "/lovable-uploads/b96cb3ad-9476-4b00-aeae-1f6ab402dffd.png",
+    alt: "Tarihi Görüntü 1",
+    caption: "Osmanlı Dönemi İstanbul"
+  },
+  {
+    src: "/lovable-uploads/ea9eb8c8-9f74-48a5-a629-6e2988a116bb.png",
+    alt: "Tarihi Görüntü 2",
+    caption: "Eski İstanbul Sokakları"
+  }
+];
 
 const Index: React.FC = () => {
   const { data: featuredArticles } = useQuery({
@@ -70,7 +82,7 @@ const Index: React.FC = () => {
         </div>
 
         {/* Historical Images Carousel */}
-        <HistoricalImagesCarousel />
+        <HistoricalImagesCarousel images={historicalImages} />
 
         {/* Featured Articles */}
         <section className="py-16 dark:bg-coffee-900/30">
