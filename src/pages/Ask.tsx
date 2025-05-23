@@ -26,6 +26,7 @@ const Ask = () => {
           {
             name,
             email,
+            title: `Soru: ${question.substring(0, 50)}...`,
             question,
             status: 'pending'
           }

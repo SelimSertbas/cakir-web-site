@@ -3,8 +3,18 @@ import { Button } from '../components/ui/button';
 import ImageUploader from './ImageUploader';
 import { Input } from '../components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { useEditor } from '@tiptap/react';
-import { extensions } from '../utils/tiptapExtensions';
+import { Editor, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
+
+const extensions = [
+  StarterKit,
+  Link.configure({
+    openOnClick: false,
+  }),
+  Image,
+];
 
 interface RichTextEditorProps {
   initialContent?: string;
@@ -37,7 +47,7 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const editor = useEditor({
     extensions,
     content: content || '',
-    onUpdate: ({ editor }) => {
+    onUpdate: ({ editor }: { editor: Editor }) => {
       setContent(editor.getHTML());
     }
   });
@@ -54,8 +64,42 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     setCharactersLeft(500 - metaDescription.length);
   }, [metaDescription]);
 
-  const handleCommand = (command: string, value: string | null = null) => {
-    editor?.commands.command(command, { value });
+  const handleCommand = (command: string, value?: string) => {
+    if (!editor) return;
+    
+    switch (command) {
+      case 'bold':
+        editor.chain().focus().toggleBold().run();
+        break;
+      case 'italic':
+        editor.chain().focus().toggleItalic().run();
+        break;
+      case 'formatBlock':
+        if (value === '<h2>') {
+          editor.chain().focus().toggleHeading({ level: 2 }).run();
+        } else if (value === '<h3>') {
+          editor.chain().focus().toggleHeading({ level: 3 }).run();
+        } else if (value === '<blockquote>') {
+          editor.chain().focus().toggleBlockquote().run();
+        }
+        break;
+      case 'insertUnorderedList':
+        editor.chain().focus().toggleBulletList().run();
+        break;
+      case 'insertOrderedList':
+        editor.chain().focus().toggleOrderedList().run();
+        break;
+      case 'createLink':
+        if (value) {
+          editor.chain().focus().setLink({ href: value }).run();
+        }
+        break;
+      case 'insertHTML':
+        if (value) {
+          editor.chain().focus().insertContent(value).run();
+        }
+        break;
+    }
   };
 
   const handleImageSelected = (imageUrl: string, alt: string, title: string) => {
@@ -152,38 +196,6 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           className="text-coffee-700 hover:text-coffee-900 hover:bg-coffee-100 px-2"
         >
           Alt Başlık
-        </Button>
-        <Button 
-          type="button" 
-          variant="ghost" 
-          size="sm"
-          onClick={() => handleCommand('insertUnorderedList')}
-          className="text-coffee-700 hover:text-coffee-900 hover:bg-coffee-100 px-2"
-        >
-          Liste
-        </Button>
-        <Button 
-          type="button" 
-          variant="ghost" 
-          size="sm"
-          onClick={() => handleCommand('insertOrderedList')}
-          className="text-coffee-700 hover:text-coffee-900 hover:bg-coffee-100 px-2"
-        >
-          Numaralı Liste
-        </Button>
-        <Button 
-          type="button" 
-          variant="ghost" 
-          size="sm"
-          onClick={() => {
-            const url = prompt('Bağlantı URL\'ini girin:');
-            if (url) {
-              handleCommand('createLink', url);
-            }
-          }}
-          className="text-coffee-700 hover:text-coffee-900 hover:bg-coffee-100 px-2"
-        >
-          Bağlantı
         </Button>
         <Button 
           type="button" 

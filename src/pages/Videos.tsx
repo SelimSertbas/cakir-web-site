@@ -38,7 +38,11 @@ const Videos: React.FC = () => {
       }
 
       if (data) {
-        setVideos(data);
+        const processedVideos = data.map(video => ({
+          ...video,
+          video_id: video.video_url.split('v=')[1]?.split('&')[0] || ''
+        }));
+        setVideos(processedVideos);
       }
     } catch (error) {
       console.error('Error loading videos:', error);

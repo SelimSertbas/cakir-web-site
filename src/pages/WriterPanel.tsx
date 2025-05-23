@@ -31,7 +31,7 @@ interface Question {
 
 const WriterPanel: React.FC = () => {
   const navigate = useNavigate();
-  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
+  const [selectedArticleId, setSelectedArticleId] = useState<string | undefined>(undefined);
   const [activeTab, setActiveTab] = useState('articles');
   const [videoListKey, setVideoListKey] = useState(0);
   const [activeVideoTab, setActiveVideoTab] = useState('list');
@@ -41,7 +41,6 @@ const WriterPanel: React.FC = () => {
   const [editedName, setEditedName] = useState('');
   const [editedTitle, setEditedTitle] = useState('');
   const [editedQuestion, setEditedQuestion] = useState('');
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const { data: questions } = useQuery({
     queryKey: ['questions'],
@@ -133,7 +132,7 @@ const WriterPanel: React.FC = () => {
   const handleSelectTab = (value: string) => {
     setActiveTab(value);
     if (value === 'articles') {
-      setSelectedArticleId(null);
+      setSelectedArticleId(undefined);
     }
   };
 
@@ -180,12 +179,6 @@ const WriterPanel: React.FC = () => {
         title: editedTitle,
         question: editedQuestion
       });
-    }
-  };
-
-  const handleImageSelected = (url: string | null) => {
-    if (url) {
-      setImageUrl(url);
     }
   };
 
@@ -253,7 +246,7 @@ const WriterPanel: React.FC = () => {
                 <TabsContent value="edit">
                   <ArticleForm 
                     articleId={selectedArticleId} 
-                    onSave={() => setSelectedArticleId(null)}
+                    onSave={() => setSelectedArticleId(undefined)}
                   />
                 </TabsContent>
               </Tabs>

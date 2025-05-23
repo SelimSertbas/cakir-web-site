@@ -15,7 +15,7 @@ export const ArticleDetail = () => {
   const { data: article, isLoading } = useQuery<Article | null>(
     ['article', id],
     async () => {
-      if (!id) return null;
+      if (!id) throw new Error('Article ID is required');
       const { data, error } = await supabase
         .from('articles')
         .select('*')
@@ -24,9 +24,12 @@ export const ArticleDetail = () => {
 
       if (error) {
         console.error("Error fetching article:", error);
-        return null;
+        throw error;
       }
-      return data as Article | null;
+      return data as Article;
+    },
+    {
+      enabled: !!id
     }
   );
 
