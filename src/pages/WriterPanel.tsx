@@ -132,11 +132,6 @@ const WriterPanel: React.FC = () => {
     }
   }, [navigate]);
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
   const handleSelectTab = (value: string) => {
     if (value === 'articles') {
       setSelectedArticleId(undefined);
