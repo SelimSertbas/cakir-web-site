@@ -32,7 +32,6 @@ interface Question {
 const WriterPanel: React.FC = () => {
   const navigate = useNavigate();
   const [selectedArticleId, setSelectedArticleId] = useState<string | undefined>(undefined);
-  const [activeTab, setActiveTab] = useState('articles');
   const [videoListKey, setVideoListKey] = useState(0);
   const [activeVideoTab, setActiveVideoTab] = useState('list');
   const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
@@ -130,7 +129,6 @@ const WriterPanel: React.FC = () => {
   };
 
   const handleSelectTab = (value: string) => {
-    setActiveTab(value);
     if (value === 'articles') {
       setSelectedArticleId(undefined);
     }

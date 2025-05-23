@@ -9,7 +9,7 @@ type UtilType = {
 
 // Create a custom util object with our implementations
 const customUtil: UtilType = {
-  debuglog: (namespace: string) => (...args: any[]) => {},
+  debuglog: (_namespace: string) => (..._args: any[]) => {},
   inspect: (obj: any) => JSON.stringify(obj, null, 2)
 };
 
