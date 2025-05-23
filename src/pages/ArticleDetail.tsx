@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Article } from '@/types';
@@ -30,6 +30,22 @@ export const ArticleDetail = () => {
     {
       enabled: !!id
     }
+  );
+
+  // Diğer makaleler
+  const { data: otherArticles } = useQuery<Article[]>(
+    ['other-articles', id],
+    async () => {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('id, title, image_url, excerpt')
+        .neq('id', id || '')
+        .order('published_at', { ascending: false })
+        .limit(3);
+      if (error) throw error;
+      return data as Article[];
+    },
+    { enabled: !!id }
   );
 
   const formatDateSafe = (dateString: string | undefined) => {
@@ -93,6 +109,26 @@ export const ArticleDetail = () => {
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
           </article>
+
+          {/* Diğer Makalelere Göz At */}
+          {otherArticles && otherArticles.length > 0 && (
+            <section className="mt-16">
+              <h2 className="text-2xl font-bold mb-6 text-coffee-800 dark:text-coffee-100">Diğer Makalelere Göz At</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {otherArticles.map((other) => (
+                  <Link to={`/articles/${other.id}`} key={other.id} className="block bg-white dark:bg-coffee-900 rounded-lg shadow hover:shadow-lg transition overflow-hidden">
+                    {other.image_url && (
+                      <img src={other.image_url} alt={other.title} className="w-full h-40 object-cover" />
+                    )}
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-coffee-900 dark:text-coffee-100 mb-2">{other.title}</h3>
+                      <p className="text-coffee-700 dark:text-coffee-300 text-sm line-clamp-3">{other.excerpt}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </main>
       <Footer />

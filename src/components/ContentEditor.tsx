@@ -1,9 +1,6 @@
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { useEffect, useState } from 'react';
+import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-
-const ReactQuill = React.lazy(() => import('react-quill').then(module => {
-  return { default: module.default };
-}));
 
 interface ContentEditorProps {
   initialValue?: string;
@@ -41,17 +38,15 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ initialValue = '', onChan
 
   return (
     <div className="border border-coffee-200 rounded-lg overflow-hidden bg-white dark:bg-coffee-50">
-      <Suspense fallback={<div>Yükleniyor...</div>}>
-        <ReactQuill
-          theme="snow"
-          value={value}
-          onChange={setValue}
-          modules={modules}
-          formats={formats}
-          placeholder="İçeriğinizi buraya yazın..."
-          style={{ minHeight: 300 }}
-        />
-      </Suspense>
+      <ReactQuill
+        theme="snow"
+        value={value}
+        onChange={setValue}
+        modules={modules}
+        formats={formats}
+        placeholder="İçeriğinizi buraya yazın..."
+        style={{ minHeight: 300 }}
+      />
     </div>
   );
 };

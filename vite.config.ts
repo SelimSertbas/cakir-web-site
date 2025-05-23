@@ -43,4 +43,7 @@ export default defineConfig({
       overlay: false
     }
   },
+  optimizeDeps: {
+    include: ['react-quill']
+  }
 });

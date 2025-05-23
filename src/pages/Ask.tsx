@@ -8,15 +8,43 @@ import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
+const COOLDOWN_SECONDS = 180; // 3 dakika
+
 const Ask = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [question, setQuestion] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+
+  // Cooldown timer
+  React.useEffect(() => {
+    const lastTime = localStorage.getItem('lastAskTime');
+    if (lastTime) {
+      const diff = Math.floor((Date.now() - parseInt(lastTime, 10)) / 1000);
+      if (diff < COOLDOWN_SECONDS) {
+        setCooldown(COOLDOWN_SECONDS - diff);
+        const interval = setInterval(() => {
+          setCooldown(prev => {
+            if (prev <= 1) {
+              clearInterval(interval);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        return () => clearInterval(interval);
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cooldown > 0) {
+      toast.error(`Yeni bir soru göndermek için lütfen ${cooldown} saniye bekleyin.`);
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -34,6 +62,8 @@ const Ask = () => {
 
       if (error) throw error;
 
+      localStorage.setItem('lastAskTime', Date.now().toString());
+      setCooldown(COOLDOWN_SECONDS);
       toast.success('Sorunuz başarıyla gönderildi. En kısa sürede yanıtlanacaktır.');
       navigate('/');
     } catch (error) {
@@ -103,9 +133,9 @@ const Ask = () => {
             <Button
               type="submit"
               className="w-full bg-coffee-700 hover:bg-coffee-800 dark:bg-coffee-600 dark:hover:bg-coffee-700"
-              disabled={isSubmitting}
+              disabled={isSubmitting || cooldown > 0}
             >
-              {isSubmitting ? 'Gönderiliyor...' : 'Soruyu Gönder'}
+              {isSubmitting ? 'Gönderiliyor...' : cooldown > 0 ? `Tekrar göndermek için ${cooldown} sn bekleyin` : 'Soruyu Gönder'}
             </Button>
           </form>
         </div>

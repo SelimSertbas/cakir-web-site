@@ -7,12 +7,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-interface HistoricalImage {
-  src: string;
-  alt: string;
-  caption: string;
-}
-
+// Only src is required now
+type HistoricalImage = { src: string };
 interface HistoricalImagesCarouselProps {
   images: HistoricalImage[];
 }
@@ -21,20 +17,10 @@ export const HistoricalImagesCarousel = ({ images }: HistoricalImagesCarouselPro
   const [api, setApi] = useState<any>(null);
 
   useEffect(() => {
-    if (!api) {
-      return;
-    }
-
-    // Update current index when slide changes
-    const onSelect = () => {
-      // setCurrentIndex(api.selectedScrollSnap()); // Functionality removed as currentIndex is not used
-    };
-
+    if (!api) return;
+    const onSelect = () => {};
     api.on("select", onSelect);
-
-    return () => {
-      api.off("select", onSelect);
-    };
+    return () => { api.off("select", onSelect); };
   }, [api]);
 
   return (
@@ -42,18 +28,15 @@ export const HistoricalImagesCarousel = ({ images }: HistoricalImagesCarouselPro
       <h2 className="text-2xl font-semibold text-center mb-6">Tarihi Görüntüler</h2>
       <Carousel className="max-w-3xl mx-auto" setApi={setApi}>
         <CarouselContent>
-          {images.map((image: HistoricalImage, index: number) => (
+          {images.map((image, index) => (
             <CarouselItem key={index}>
               <div className="relative">
                 <img 
-                  src={image.src} 
-                  alt={image.alt} 
+                  src={image.src}
+                  alt="Tarihten Kareler"
                   className="w-full h-auto object-cover rounded-lg shadow-lg"
                   style={{ maxHeight: '500px' }} 
                 />
-                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-4">
-                  <p className="text-center">{image.caption}</p>
-                </div>
               </div>
             </CarouselItem>
           ))}
