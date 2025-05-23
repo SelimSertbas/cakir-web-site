@@ -25,7 +25,7 @@ export const VideoList: React.FC = () => {
         if (data) {
           setVideos(data.map(video => ({
             ...video,
-            video_id: video.video_id || video.id,
+            video_id: video.id,
             status: video.status as "draft" | "published"
           })));
         }
