@@ -10,6 +10,7 @@ export interface Article {
   published_at: string | undefined;
   updated_at: string;
   author_id: string;
+  created_at: string;
 }
 
 export interface Video {

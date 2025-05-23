@@ -6,39 +6,44 @@ import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
 import { Edit, Trash2, Eye } from 'lucide-react';
 import { Article } from '@/types';
-import { Loading } from './ui/loading';
 
 interface ArticleListProps {
   onEdit: (id: string) => void;
 }
 
-export const ArticleList: React.FC<ArticleListProps> = ({ onEdit }) => {
+export const ArticleList = ({ onEdit }: ArticleListProps) => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('articles')
-          .select('*')
-          .order('created_at', { ascending: false });
+  const fetchArticles = async () => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('articles')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-        if (error) throw error;
+      if (error) throw error;
 
-        if (data) {
-          setArticles(data.map(article => ({
-            ...article,
-            status: article.status as "draft" | "published"
-          })));
-        }
-      } catch (error) {
-        console.error('Error fetching articles:', error);
-      } finally {
-        setIsLoading(false);
+      if (data) {
+        setArticles(data.map(article => ({
+          ...article,
+          status: article.status as "draft" | "published"
+        })) as Article[]);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching articles:', error);
+      toast({
+        title: "Hata",
+        description: "Makaleler yüklenemedi.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchArticles();
   }, []);
 

@@ -1,14 +1,13 @@
 import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/browser";
-import { Replay } from "@sentry/replay";
+import { browserTracingIntegration, replayIntegration } from "@sentry/react";
 
 export const initSentry = () => {
   if (import.meta.env.PROD) {
     Sentry.init({
       dsn: import.meta.env.VITE_SENTRY_DSN,
       integrations: [
-        new BrowserTracing(),
-        new Replay(),
+        browserTracingIntegration(),
+        replayIntegration(),
       ],
       // Performance Monitoring
       tracesSampleRate: 1.0, // Capture 100% of transactions, adjust in production
