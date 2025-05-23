@@ -6,34 +6,42 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { format } from 'date-fns';
+import { tr } from 'date-fns/locale';
+import { Loading } from '@/components/ui/loading';
 
 interface Question {
   id: string;
-  name: string;
   title: string;
+  name: string;
+  email: string;
   question: string;
-  answer: string;
+  answer: string | null;
   created_at: string;
+  status: 'pending' | 'answered';
 }
 
 const QuestionDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const { data: question } = useQuery<Question>({
+  const { data: question, isLoading } = useQuery<Question>({
     queryKey: ['question', id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('questions')
         .select('*')
         .eq('id', id)
-        .eq('is_published', true)
         .single();
 
       if (error) throw error;
       return data;
     },
   });
+
+  if (isLoading) {
+    return <Loading text="Soru yükleniyor..." />;
+  }
 
   if (!question) {
     return (
@@ -69,9 +77,9 @@ const QuestionDetail = () => {
               <h1 className="text-3xl font-serif font-bold text-coffee-900 dark:text-coffee-100 mb-4">
                 {question.title}
               </h1>
-              <p className="text-sm text-coffee-600 dark:text-coffee-400">
-                {question.name} • {new Date(question.created_at).toLocaleDateString('tr-TR')}
-              </p>
+              <div className="text-sm text-coffee-600 dark:text-coffee-400">
+                {question.name} - {format(new Date(question.created_at), 'd MMMM yyyy', { locale: tr })}
+              </div>
             </div>
 
             <div className="space-y-8">
@@ -86,16 +94,18 @@ const QuestionDetail = () => {
                 </div>
               </div>
 
-              <div>
-                <h2 className="text-xl font-medium text-coffee-900 dark:text-coffee-100 mb-4">
-                  Yanıt
-                </h2>
-                <div className="prose dark:prose-invert max-w-none">
-                  <p className="text-coffee-700 dark:text-coffee-300">
-                    {question.answer}
-                  </p>
+              {question.answer && (
+                <div>
+                  <h2 className="text-xl font-medium text-coffee-900 dark:text-coffee-100 mb-4">
+                    Yanıt
+                  </h2>
+                  <div className="prose dark:prose-invert max-w-none">
+                    <p className="text-coffee-700 dark:text-coffee-300">
+                      {question.answer}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

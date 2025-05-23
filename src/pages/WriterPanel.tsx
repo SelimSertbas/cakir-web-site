@@ -41,6 +41,7 @@ const WriterPanel: React.FC = () => {
   const [editedName, setEditedName] = useState('');
   const [editedTitle, setEditedTitle] = useState('');
   const [editedQuestion, setEditedQuestion] = useState('');
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
 
   const { data: questions } = useQuery({
     queryKey: ['questions'],
@@ -179,6 +180,12 @@ const WriterPanel: React.FC = () => {
         title: editedTitle,
         question: editedQuestion
       });
+    }
+  };
+
+  const handleImageSelected = (url: string | null) => {
+    if (url) {
+      setImageUrl(url);
     }
   };
 
