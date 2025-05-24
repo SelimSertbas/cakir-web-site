@@ -30,6 +30,10 @@ const ContentEditor: React.FC<ContentEditorProps> = ({ initialValue = '', onChan
   const [value, setValue] = useState(initialValue);
 
   useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
     onChange(value);
   }, [value, onChange]);
 

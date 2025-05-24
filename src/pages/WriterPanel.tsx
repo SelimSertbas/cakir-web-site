@@ -191,7 +191,7 @@ const WriterPanel: React.FC = () => {
       <aside className="w-64 bg-coffee-900 text-white flex flex-col py-6 px-4 shadow-lg">
         <div className="mb-10 flex items-center gap-2 px-2">
           <Home size={28} className="text-coffee-200" />
-          <span className="font-serif text-2xl font-bold tracking-tight">Yazar Paneli</span>
+          <span className="font-serif text-2xl font-bold tracking-tight">Yavşak Çakır hoşgeldiniz!</span>
         </div>
         <nav className="flex-1 space-y-2">
           {menuItems.map(item => (
