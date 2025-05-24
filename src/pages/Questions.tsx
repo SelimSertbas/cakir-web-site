@@ -24,6 +24,7 @@ const Questions = () => {
       const { data, error } = await supabase
         .from('questions')
         .select('*')
+        .eq('is_published', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
