@@ -67,6 +67,20 @@ export const WriterPanel: React.FC = () => {
     },
   });
 
+  const deleteMutation = useMutation<void, Error, { questionId: string }>({
+    mutationFn: async ({ questionId }) => {
+      const { error } = await supabase
+        .from('questions')
+        .delete()
+        .eq('id', questionId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['questions'] });
+      setSelectedQuestion(null);
+    },
+  });
+
   const handleVideoSave = () => {
     setVideoListKey(prev => prev + 1);
   };
@@ -164,7 +178,7 @@ export const WriterPanel: React.FC = () => {
                 {questions?.map((question) => (
                   <div
                     key={question.id}
-                    className="bg-white dark:bg-coffee-800 rounded-lg p-6 shadow-sm border border-coffee-200 dark:border-coffee-700 cursor-pointer hover:bg-coffee-50 dark:hover:bg-coffee-900/40"
+                    className="bg-white dark:bg-coffee-800 rounded-lg p-6 shadow-sm border border-coffee-200 dark:border-coffee-700 cursor-pointer hover:bg-coffee-50 dark:hover:bg-coffee-900/40 flex flex-col gap-2"
                     onClick={() => setSelectedQuestion(question)}
                   >
                     <div className="flex items-center justify-between mb-4">
@@ -184,6 +198,15 @@ export const WriterPanel: React.FC = () => {
                         }`}>
                           {question.status === 'answered' ? 'Yanıtlandı' : 'Beklemede'}
                         </span>
+                        <button
+                          className="ml-2 px-2 py-1 rounded bg-red-100 text-red-700 hover:bg-red-200 text-xs"
+                          onClick={e => {
+                            e.stopPropagation();
+                            if (window.confirm('Bu soruyu silmek istediğine emin misin?')) {
+                              deleteMutation.mutate({ questionId: question.id });
+                            }
+                          }}
+                        >Sil</button>
                       </div>
                     </div>
                     <p className="text-coffee-700 dark:text-coffee-300 mb-4">{question.question}</p>
