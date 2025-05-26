@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import React, { useRef, useCallback } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
@@ -8,15 +8,6 @@ import Footer from '../components/Footer';
 import { Youtube, PlayCircle } from 'lucide-react';
 import { Loading } from '../components/ui/loading';
 import { Link } from 'react-router-dom';
-
-interface Video {
-  id: string;
-  title: string;
-  video_url: string;
-  video_id: string;
-  created_at: string;
-  updated_at: string;
-}
 
 const VIDEOS_PER_PAGE = 12;
 

@@ -7,9 +7,9 @@ import Footer from '@/components/Footer';
 import { Loading } from '@/components/ui/loading';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
-import { Facebook, Twitter, Share2, Copy, MessageCircle, Instagram, ArrowUp } from 'lucide-react';
+import { Facebook, Twitter, Copy, MessageCircle, Instagram, ArrowUp } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
-import React, { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 export const ArticleDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -100,12 +100,12 @@ export const ArticleDetail = () => {
     if (!article?.content) return '';
     let idx = 0;
     return article.content
-      .replace(/<(h2|h3)([^>]*)>(.*?)<\/\1>/gi, (match, tag, attrs, text) => {
+      .replace(/<(h2|h3)([^>]*)>(.*?)<\/\1>/gi, (_, tag, attrs, text) => {
         const id = toc[idx]?.id || `toc-heading-${idx}`;
         idx++;
         return `<${tag} id="${id}"${attrs}>${text}</${tag}>`;
       })
-      .replace(/<strong([^>]*)>(.*?)<\/strong>/gi, (match, attrs, text) => {
+      .replace(/<strong([^>]*)>(.*?)<\/strong>/gi, (_, attrs, text) => {
         const id = toc[idx]?.id || `toc-heading-${idx}`;
         idx++;
         return `<strong id="${id}"${attrs}>${text}</strong>`;
@@ -138,30 +138,21 @@ export const ArticleDetail = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Makale görüntülendiğinde views alanını artır (daha güvenli yöntem)
+  // Makale görüntülendiğinde views alanını artır
   useEffect(() => {
     async function incrementViews() {
-      if (id) {
-        const { data, error } = await supabase
+      if (id && article) {
+        const { error: updateError } = await supabase
           .from('articles')
-          .select('views')
-          .eq('id', id)
-          .single();
-        if (!error && data) {
-          const { error: updateError } = await supabase
-            .from('articles')
-            .update({ views: (data.views || 0) + 1 })
-            .eq('id', id);
-          if (updateError) {
-            console.error('Views update error:', updateError);
-          }
-        } else if (error) {
-          console.error('Views fetch error:', error);
+          .update({ views: (article.views || 0) + 1 })
+          .eq('id', id);
+        if (updateError) {
+          console.error('Views update error:', updateError);
         }
       }
     }
     incrementViews();
-  }, [id]);
+  }, [id, article]);
 
   if (isLoading) {
     return <Loading text="Makale yükleniyor..." />;

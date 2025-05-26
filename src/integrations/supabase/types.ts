@@ -23,6 +23,7 @@ export interface Database {
           title: string
           type: string
           updated_at: string
+          views: number
         }
         Insert: {
           author_id: string
@@ -37,6 +38,7 @@ export interface Database {
           title: string
           type: string
           updated_at?: string
+          views?: number
         }
         Update: {
           author_id?: string
@@ -51,6 +53,7 @@ export interface Database {
           title?: string
           type?: string
           updated_at?: string
+          views?: number
         }
         Relationships: []
       }

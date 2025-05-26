@@ -4,10 +4,9 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { format } from 'date-fns';
 import { tr } from 'date-fns/locale';
-import { Loading } from '@/components/ui/loading';
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ThumbsUp, CheckCircle, Clock, User } from 'lucide-react';
+import { Search, Clock, User } from 'lucide-react';
 
 interface Question {
   id: string;
@@ -41,7 +40,6 @@ const Questions = () => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'answered' | 'pending'>('all');
   const [sort, setSort] = useState<'new' | 'old'>('new');
-  const [likeMap, setLikeMap] = useState<Record<string, boolean>>({});
 
   const { data: questions, isLoading } = useQuery<Question[]>({
     queryKey: ['questions'],

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Video, HelpCircle, Clock, Plus, ChevronRight, Calendar } from 'lucide-react';
+import { FileText, Video, HelpCircle, Clock, Plus, ChevronRight } from 'lucide-react';
 import { Button } from './ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -38,24 +38,6 @@ export const Dashboard: React.FC = () => {
     return count || 0;
   });
   // Son eklenenler
-  const { data: lastArticles } = useQuery(['dashboard-last-articles'], async () => {
-    const { data, error } = await supabase
-      .from('articles')
-      .select('id, title, created_at')
-      .order('created_at', { ascending: false })
-      .limit(3);
-    if (error) throw error;
-    return data || [];
-  });
-  const { data: lastVideos } = useQuery(['dashboard-last-videos'], async () => {
-    const { data, error } = await supabase
-      .from('videos')
-      .select('id, title, created_at')
-      .order('created_at', { ascending: false })
-      .limit(3);
-    if (error) throw error;
-    return data || [];
-  });
   const { data: lastQuestions } = useQuery(['dashboard-last-questions'], async () => {
     const { data, error } = await supabase
       .from('questions')
