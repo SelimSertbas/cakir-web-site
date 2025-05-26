@@ -135,31 +135,55 @@ export const WriterPanel: React.FC = () => {
         {activePage === 'questions' && (
           <div className="space-y-8">
             {selectedQuestion ? (
-              <QuestionForm
-                question={selectedQuestion}
-                onAnswer={(answer, isPublished) => {
-                  answerMutation.mutate({
-                    questionId: selectedQuestion.id,
-                    answer,
-                    isPublished
-                  });
-                }}
-                onUpdate={(name, title, question) => {
-                  updateMutation.mutate({
-                    questionId: selectedQuestion.id,
-                    name,
-                    title,
-                    question
-                  });
-                }}
-                onCancel={() => setSelectedQuestion(null)}
-              />
+              <div className="max-w-2xl mx-auto bg-white dark:bg-coffee-900 rounded-lg p-6 shadow-md border border-coffee-200 dark:border-coffee-700">
+                <h2 className="text-xl font-bold mb-4">Soru Detayı</h2>
+                <div className="mb-2">
+                  <span className="font-semibold">Ad Soyad: </span>{selectedQuestion.name}
+                </div>
+                <div className="mb-2">
+                  <span className="font-semibold">Başlık: </span>{selectedQuestion.title}
+                </div>
+                <div className="mb-2">
+                  <span className="font-semibold">Soru: </span>{selectedQuestion.question}
+                </div>
+                <div className="mb-2">
+                  <span className="font-semibold">Tarih: </span>{new Date(selectedQuestion.created_at).toLocaleDateString('tr-TR')}
+                </div>
+                <div className="mb-4">
+                  <label className="block font-semibold mb-1">Yanıt</label>
+                  <textarea
+                    className="w-full min-h-[100px] p-2 border rounded"
+                    value={selectedQuestion.answer || ''}
+                    onChange={e => {
+                      setSelectedQuestion({ ...selectedQuestion, answer: e.target.value });
+                    }}
+                  />
+                </div>
+                <div className="flex gap-2 justify-end">
+                  <button
+                    className="px-4 py-2 rounded bg-gray-200 dark:bg-coffee-800 text-gray-800 dark:text-coffee-100"
+                    onClick={() => setSelectedQuestion(null)}
+                  >İptal</button>
+                  <button
+                    className="px-4 py-2 rounded bg-coffee-700 text-white"
+                    onClick={() => {
+                      if (!selectedQuestion.answer || !selectedQuestion.answer.trim()) return;
+                      answerMutation.mutate({
+                        questionId: selectedQuestion.id,
+                        answer: selectedQuestion.answer,
+                        isPublished: true
+                      });
+                    }}
+                  >Yanıtı Kaydet</button>
+                </div>
+              </div>
             ) : (
               <div className="grid gap-6">
                 {questions?.map((question) => (
                   <div
                     key={question.id}
-                    className="bg-white dark:bg-coffee-800 rounded-lg p-6 shadow-sm border border-coffee-200 dark:border-coffee-700"
+                    className="bg-white dark:bg-coffee-800 rounded-lg p-6 shadow-sm border border-coffee-200 dark:border-coffee-700 cursor-pointer hover:bg-coffee-50 dark:hover:bg-coffee-900/40"
+                    onClick={() => setSelectedQuestion(question)}
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div>
