@@ -6,7 +6,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { ArticleManagement } from '@/components/ArticleManagement';
 import { Dashboard } from '@/components/Dashboard';
 import type { Article } from '@/types';
-import { QuestionForm } from '@/components/QuestionForm';
 import { AnalyticsPanel } from '@/components/AnalyticsPanel';
 import { BarChart3, FileText, HelpCircle, Video, TrendingUp, X } from 'lucide-react';
 
@@ -65,23 +64,6 @@ export const WriterPanel: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['questions'] });
       setSelectedQuestion(null);
-    },
-  });
-
-  const updateMutation = useMutation<void, Error, { questionId: string; name: string; title: string; question: string }>({
-    mutationFn: async ({ questionId, name, title, question }) => {
-      const { error } = await supabase
-        .from('questions')
-        .update({
-          name,
-          title,
-          question
-        })
-        .eq('id', questionId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['questions'] });
     },
   });
 
