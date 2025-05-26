@@ -20,7 +20,7 @@ export const ArticleList = ({ onEdit }: ArticleListProps) => {
     try {
       const { data, error } = await supabase
         .from('articles')
-        .select('*')
+        .select('id, title, excerpt, created_at, updated_at, status, image_url, category')
         .order('created_at', { ascending: false });
 
       if (error) throw error;

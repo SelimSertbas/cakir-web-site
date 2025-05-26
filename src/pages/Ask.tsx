@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { User, Mail, MessageCircle, Loader2 } from 'lucide-react';
+import confetti from 'canvas-confetti';
 
 const COOLDOWN_SECONDS = 180; // 3 dakika
 
@@ -17,6 +19,12 @@ const Ask = () => {
   const [question, setQuestion] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+  const nameRef = React.useRef<HTMLInputElement>(null);
+
+  // İlk inputa otomatik odak
+  React.useEffect(() => {
+    nameRef.current?.focus();
+  }, []);
 
   // Cooldown timer
   React.useEffect(() => {
@@ -65,6 +73,7 @@ const Ask = () => {
       localStorage.setItem('lastAskTime', Date.now().toString());
       setCooldown(COOLDOWN_SECONDS);
       toast.success('Sorunuz başarıyla gönderildi. En kısa sürede yanıtlanacaktır.');
+      confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
       navigate('/');
     } catch (error) {
       console.error('Error submitting question:', error);
@@ -88,53 +97,74 @@ const Ask = () => {
             Sorularınız, içeriklerimi zenginleştirmek ve okuyucuların ilgisini çeken konulara değinmek için kullanılacaktır.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-coffee-800/40 p-6 rounded-lg shadow-sm">
-            <div>
-              <label className="block text-sm font-medium text-coffee-700 dark:text-coffee-300 mb-1">
+          <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-coffee-900/90 p-8 rounded-2xl shadow-2xl border border-coffee-100 dark:border-coffee-800 transition-all duration-300 hover:shadow-3xl hover:scale-[1.01] active:scale-100">
+            <div className="relative">
+              <label className="block text-sm font-medium text-coffee-700 dark:text-coffee-200 mb-1" htmlFor="name">
                 Adınız Soyadınız *
               </label>
+              <span className="absolute left-3 top-9 text-coffee-400">
+                <User className="w-5 h-5" />
+              </span>
               <Input
+                id="name"
+                ref={nameRef}
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="border-coffee-200 dark:border-coffee-700"
+                aria-label="Adınız Soyadınız"
+                aria-invalid={!name}
+                className="border-coffee-200 dark:border-coffee-700 pl-10 focus:ring-2 focus:ring-coffee-400 focus:border-coffee-400 transition-all duration-200 focus:scale-105"
                 placeholder="Adınızı ve soyadınızı girin"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-coffee-700 dark:text-coffee-300 mb-1">
+            <div className="relative">
+              <label className="block text-sm font-medium text-coffee-700 dark:text-coffee-200 mb-1" htmlFor="email">
                 E-posta Adresiniz *
               </label>
+              <span className="absolute left-3 top-9 text-coffee-400">
+                <Mail className="w-5 h-5" />
+              </span>
               <Input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="border-coffee-200 dark:border-coffee-700"
+                aria-label="E-posta Adresiniz"
+                aria-invalid={!email}
+                className="border-coffee-200 dark:border-coffee-700 pl-10 focus:ring-2 focus:ring-coffee-400 focus:border-coffee-400 transition-all duration-200 focus:scale-105"
                 placeholder="E-posta adresinizi girin"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-coffee-700 dark:text-coffee-300 mb-1">
+            <div className="relative">
+              <label className="block text-sm font-medium text-coffee-700 dark:text-coffee-200 mb-1" htmlFor="question">
                 Sorunuz *
               </label>
+              <span className="absolute left-3 top-9 text-coffee-400">
+                <MessageCircle className="w-5 h-5" />
+              </span>
               <Textarea
+                id="question"
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
                 required
-                className="min-h-[200px] border-coffee-200 dark:border-coffee-700"
+                aria-label="Sorunuz"
+                aria-invalid={!question}
+                className="min-h-[200px] border-coffee-200 dark:border-coffee-700 pl-10 focus:ring-2 focus:ring-coffee-400 focus:border-coffee-400 transition-all duration-200 focus:scale-105"
                 placeholder="Sorunuzu detaylı bir şekilde yazın..."
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-coffee-700 hover:bg-coffee-800 dark:bg-coffee-600 dark:hover:bg-coffee-700"
+              className="w-full bg-coffee-700 hover:bg-coffee-800 dark:bg-coffee-600 dark:hover:bg-coffee-700 flex items-center justify-center gap-2 text-lg py-3 transition-all duration-200 hover:scale-105 active:scale-95"
               disabled={isSubmitting || cooldown > 0}
+              aria-busy={isSubmitting}
             >
+              {isSubmitting && <Loader2 className="w-5 h-5 animate-spin" />}
               {isSubmitting ? 'Gönderiliyor...' : cooldown > 0 ? `Tekrar göndermek için ${cooldown} sn bekleyin` : 'Soruyu Gönder'}
             </Button>
           </form>

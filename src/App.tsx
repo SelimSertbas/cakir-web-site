@@ -10,12 +10,13 @@ import About from "./pages/About";
 import Articles from "./pages/Articles";
 import ArticleDetail from "./pages/ArticleDetail";
 import Login from "./pages/Login";
-import WriterPanel from "./pages/WriterPanel";
+import { WriterPanel } from "./pages/WriterPanel";
 import NotFound from "./pages/NotFound";
 import YouTube from "./pages/Videos";  // Updated import name
 import Ask from "./pages/Ask";
 import Questions from "./pages/Questions";
 import QuestionDetail from "@/pages/QuestionDetail";
+import VideoDetail from './pages/VideoDetail';
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/articles" element={<Articles />} />
             <Route path="/articles/:id" element={<ArticleDetail />} />
             <Route path="/videos" element={<YouTube />} />  {/* Updated route component */}
+            <Route path="/videos/:id" element={<VideoDetail />} />
             <Route path="/ask" element={<Ask />} />
             <Route path="/questions" element={<Questions />} />
             <Route path="/questions/:id" element={<QuestionDetail />} />

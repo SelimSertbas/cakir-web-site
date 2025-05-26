@@ -11,6 +11,7 @@ export interface Article {
   updated_at: string;
   author_id: string;
   created_at: string;
+  views: number;
 }
 
 export interface Video {

@@ -1,7 +1,6 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardFooter } from '../components/ui/card';
+import { Card, CardContent, CardFooter } from './ui/card';
 
 interface ArticleCardProps {
   id: string;
@@ -22,18 +21,32 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   image,
   type
 }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
   // Determine the base path based on the type
   const basePath = type === 'article' ? '/articles/' : '/opinion/';
   
   return (
     <Link to={`${basePath}${id}`}>
       <Card className="h-full overflow-hidden hover:shadow-md transition-shadow border-coffee-100 dark:border-coffee-800 hover:border-coffee-200 dark:hover:border-coffee-700">
-        {image && (
-          <div className="aspect-video overflow-hidden">
+        {image && !imageError && (
+          <div className="aspect-video overflow-hidden relative bg-coffee-100 dark:bg-coffee-800">
+            {!imageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="w-8 h-8 border-4 border-coffee-200 border-t-coffee-600 rounded-full animate-spin"></div>
+              </div>
+            )}
             <img 
               src={image} 
               alt={title}
-              className="w-full h-full object-cover transition-transform hover:scale-105 duration-500"
+              loading="lazy"
+              className={`w-full h-full object-cover transition-transform hover:scale-105 duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={() => setImageLoaded(true)}
+              onError={() => {
+                setImageError(true);
+                setImageLoaded(true);
+              }}
             />
           </div>
         )}

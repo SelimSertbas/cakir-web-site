@@ -3,13 +3,13 @@ import { Facebook, Instagram, Twitter, Youtube, Mail } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-coffee-900 text-coffee-100 py-8">
+    <footer className="bg-white text-coffee-900 dark:bg-coffee-900 dark:text-coffee-100 py-8">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center justify-center space-y-6">
           {/* Logo ve Başlık */}
           <div className="text-center">
             <h2 className="text-2xl font-serif font-bold">Ahmet Çakır</h2>
-            <p className="text-coffee-300 mt-2">Tarihçi, Yazar</p>
+            <p className="text-coffee-500 dark:text-coffee-300 mt-2">Tarihçi, Yazar</p>
           </div>
 
           {/* Sosyal Medya İkonları */}
@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
               href="https://www.facebook.com/profile.php?id=61563547570013"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-coffee-300 hover:text-white transition-colors"
+              className="text-coffee-500 dark:text-coffee-300 hover:text-coffee-700 dark:hover:text-white transition-colors"
               title="Facebook"
             >
               <Facebook className="h-6 w-6" />
@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
               href="https://www.instagram.com/ahmetcakirresmi/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-coffee-300 hover:text-white transition-colors"
+              className="text-coffee-500 dark:text-coffee-300 hover:text-coffee-700 dark:hover:text-white transition-colors"
               title="Instagram"
             >
               <Instagram className="h-6 w-6" />
@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
               href="https://x.com/ahmedcakirrr?s=21"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-coffee-300 hover:text-white transition-colors"
+              className="text-coffee-500 dark:text-coffee-300 hover:text-coffee-700 dark:hover:text-white transition-colors"
               title="X (Twitter)"
             >
               <Twitter className="h-6 w-6" />
@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
               href="https://www.tiktok.com/@ahmetcakirresmi?lang=tr-TR"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-coffee-300 hover:text-white transition-colors"
+              className="text-coffee-500 dark:text-coffee-300 hover:text-coffee-700 dark:hover:text-white transition-colors"
               title="TikTok"
             >
               <svg
@@ -60,14 +60,14 @@ const Footer: React.FC = () => {
               href="https://www.youtube.com/@ahmedcakirresmi"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-coffee-300 hover:text-white transition-colors"
+              className="text-coffee-500 dark:text-coffee-300 hover:text-coffee-700 dark:hover:text-white transition-colors"
               title="YouTube"
             >
               <Youtube className="h-6 w-6" />
             </a>
             <a
               href="mailto:Ahmedcakirresmi@gmail.com"
-              className="text-coffee-300 hover:text-white transition-colors"
+              className="text-coffee-500 dark:text-coffee-300 hover:text-coffee-700 dark:hover:text-white transition-colors"
               title="E-posta"
             >
               <Mail className="h-6 w-6" />
@@ -76,10 +76,10 @@ const Footer: React.FC = () => {
 
           {/* İletişim Bilgileri */}
           <div className="text-center">
-            <p className="text-coffee-300">
+            <p className="text-coffee-500 dark:text-coffee-300">
               <a
                 href="mailto:Ahmedcakirresmi@gmail.com"
-                className="hover:text-white transition-colors"
+                className="hover:text-coffee-700 dark:hover:text-white transition-colors"
               >
                 Ahmedcakirresmi@gmail.com
               </a>
@@ -87,7 +87,7 @@ const Footer: React.FC = () => {
           </div>
 
           {/* Telif Hakkı */}
-          <div className="text-center text-coffee-400 text-sm">
+          <div className="text-center text-coffee-400 dark:text-coffee-400 text-sm">
             <p>&copy; {new Date().getFullYear()} Ahmet Çakır. Tüm hakları saklıdır.</p>
           </div>
         </div>
